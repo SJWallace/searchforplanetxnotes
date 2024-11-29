@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const CelestialObject = ({ image, type }) => {
+const CelestialObject = ({ image, type, size = "64px" }) => {
     const [state, setState] = useState("neutral");
 
     const handleClick = () => {
@@ -16,10 +16,11 @@ const CelestialObject = ({ image, type }) => {
             onClick={handleClick}
             style={{
                 position: "relative",
-                width: "120px",
-                height: "120px",
+                width: "64px",
+                height: "64px",
                 cursor: "pointer",
                 display: "inline-block",
+                boxSizing: "border-box"
             }}
         >
             {/* Base image */}
@@ -31,6 +32,7 @@ const CelestialObject = ({ image, type }) => {
                     height: "100%",
                     objectFit: "contain",
                     filter: state === "neutral" ? "grayscale(100%)" : "none", // Gray for neutral
+                    boxSizing: "border-box"
                 }}
             />
 
@@ -69,8 +71,8 @@ const CelestialObject = ({ image, type }) => {
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
-                        width="120"
-                        height="120"
+                        width="100%"
+                        height="100%"
                     >
                         <line
                             x1="4"
