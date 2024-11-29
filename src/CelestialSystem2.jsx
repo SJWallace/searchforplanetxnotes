@@ -8,11 +8,11 @@ import PlanetX from "./PlanetX";
 
 const CelestialSystem2 = ({ configurations, index }) => {
     const celestialComponents = [
-        { name: "Asteroid", component: <Asteroid /> },
         { name: "Comet", component: <Comet /> },
+        { name: "Asteroid", component: <Asteroid /> },
         { name: "DwarfPlanet", component: <DwarfPlanet /> },
-        { name: "EmptySpace", component: <EmptySpace /> },
         { name: "GasCloud", component: <GasCloud /> },
+        { name: "EmptySpace", component: <EmptySpace /> },
         { name: "PlanetX", component: <PlanetX /> }
     ];
 
