@@ -1,12 +1,15 @@
-import React, {useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import PropTypes from 'prop-types';
 import Starscape from './Starscape.jsx';
 import ObjectIcons from './ObjectIcons'; // Assuming ObjectIcons is exported from a module
+import { RuleIcons } from "./RulesIcons.jsx";
 
 // Placeholder components for GameLog and ResearchNotes
 const GameLog = () => (
-    <div style={{ border: '1px solid black', padding: '10px', height: '100%' }}>
+    <div style={{border: '1px solid black', padding: '10px', height: '100%'}}>
         <h2>Game Log</h2>
+        <h1>Multi-Step Object Selector</h1>
+        <MultiStepObjectSelector steps={ruleGenerationStepsConfig}/>
         <p>Details about game events will be shown here.</p>
     </div>
 );
@@ -14,18 +17,18 @@ const GameLog = () => (
 const normalResearchStepsConfig = [
     {
         options: [
-            { label: 'Comet', img: ObjectIcons.Comet },
-            { label: 'Asteroid', img: ObjectIcons.Asteroid },
-            { label: 'Dwarf Planet', img: ObjectIcons.DwarfPlanet },
-            { label: 'Gas Cloud', img: ObjectIcons.GasCloud },
+            {label: 'Comet', img: <ObjectIcons.Comet/>},
+            { label: 'Asteroid', img: <ObjectIcons.Asteroid />},
+            { label: 'Dwarf Planet', img: <ObjectIcons.DwarfPlanet />},
+            { label: 'Gas Cloud', img: <ObjectIcons.GasCloud /> },
         ],
     },
     {
         options: [
-            { label: 'Comet', img: ObjectIcons.Comet, condition: (selections) => selections[0]?.label !== 'Comet' },
-            { label: 'Asteroid', img: ObjectIcons.Asteroid, condition: (selections) => selections[0]?.label !== 'Asteroid' },
-            { label: 'Dwarf Planet', img: ObjectIcons.DwarfPlanet, condition: (selections) => selections[0]?.label !== 'Dwarf Planet' },
-            { label: 'Gas Cloud', img: ObjectIcons.GasCloud, condition: (selections) => selections[0]?.label !== 'Gas Cloud' },
+            { label: 'Comet', img: <ObjectIcons.Comet />, condition: (selections) => selections[0]?.label !== 'Comet' },
+            { label: 'Asteroid', img: <ObjectIcons.Asteroid />, condition: (selections) => selections[0]?.label !== 'Asteroid' },
+            { label: 'Dwarf Planet', img: <ObjectIcons.DwarfPlanet />, condition: (selections) => selections[0]?.label !== 'Dwarf Planet' },
+            { label: 'Gas Cloud', img: <ObjectIcons.GasCloud />, condition: (selections) => selections[0]?.label !== 'Gas Cloud' },
             { label: 'None', img: null }, // Always available as an option in the second step
         ],
     },
@@ -34,47 +37,83 @@ const normalResearchStepsConfig = [
 const planetXResearchStepsConfig = [
     {
         options: [
-            { label: 'Planet X', img: ObjectIcons.PlanetX },
+            { label: 'Planet X', img: <ObjectIcons.PlanetX /> },
         ],
     },
     {
         options: [
-            { label: 'Comet', img: ObjectIcons.Comet, condition: (selections) => selections[0]?.label !== 'Comet' },
-            { label: 'Asteroid', img: ObjectIcons.Asteroid, condition: (selections) => selections[0]?.label !== 'Asteroid' },
-            { label: 'Dwarf Planet', img: ObjectIcons.DwarfPlanet, condition: (selections) => selections[0]?.label !== 'Dwarf Planet' },
-            { label: 'Gas Cloud', img: ObjectIcons.GasCloud, condition: (selections) => selections[0]?.label !== 'Gas Cloud' },
+            { label: 'Comet', img: <ObjectIcons.Comet />, condition: (selections) => selections[0]?.label !== 'Comet' },
+            { label: 'Asteroid', img: <ObjectIcons.Asteroid />, condition: (selections) => selections[0]?.label !== 'Asteroid' },
+            { label: 'Dwarf Planet', img: <ObjectIcons.DwarfPlanet />, condition: (selections) => selections[0]?.label !== 'Dwarf Planet' },
+            { label: 'Gas Cloud', img: <ObjectIcons.GasCloud />, condition: (selections) => selections[0]?.label !== 'Gas Cloud' },
             { label: 'None', img: null }, // Always available as an option in the second step
+        ],
+    },
+];
+
+const ruleGenerationStepsConfig = [
+    {
+        // Step 1: Quantifier Selection
+        options: [
+            { label: 'NO', img: <RuleIcons.No />},
+            { label: 'AT LEAST', img: <RuleIcons.AtLeast /> },
+            { label: 'ALL', img: <RuleIcons.All /> },
+        ],
+    },
+    {
+        // Step 2: Object 1 Selection
+        options: [
+            { label: 'Comet', img: <ObjectIcons.Comet /> },
+            { label: 'Asteroid', img: <ObjectIcons.Asteroid /> },
+            { label: 'Dwarf Planet', img: <ObjectIcons.DwarfPlanet /> },
+            { label: 'Gas Cloud', img: <ObjectIcons.GasCloud /> },
+        ],
+    },
+    {
+        // Step 3: Relationship Selection
+        options: [
+            { label: 'ADJACENT', img: <RuleIcons.Adjacent /> },
+            { label: 'OPPOSITE', img: <RuleIcons.Opposite /> },
+            { label: 'WITHIN', img: <RuleIcons.WithinN /> },
+        ],
+    },
+    {
+        // Step 4: Distance (N) Input (only applicable if "WITHIN" is selected)
+        options: [
+            {
+                label: 'Set Distance',
+                img: RuleIcons.Within,
+                condition: (selections) => selections[2]?.label === 'WITHIN', // Only show if "WITHIN" is selected
+            },
+        ],
+    },
+    {
+        // Step 5: Object 2 Selection (or "None" if not applicable)
+        options: [
+            { label: 'Comet', img: <ObjectIcons.Comet /> },
+            { label: 'Asteroid', img: <ObjectIcons.Asteroid />},
+            { label: 'Dwarf Planet', img: <ObjectIcons.DwarfPlanet /> },
+            { label: 'Gas Cloud', img: <ObjectIcons.GasCloud /> },
+            { label: 'None', img: null },
         ],
     },
 ];
 
 
 const MultiStepObjectSelector = ({ steps }) => {
+    const [selections, setSelections] = useState(Array(steps.length).fill(null)); // Track selections
+    const [visibleIndex, setVisibleIndex] = useState(-1); // Initially, no dropdown is visible
+    const dropdownRef = useRef(null); // Ref for dropdown
 
-MultiStepObjectSelector.propTypes = {
-    steps: PropTypes.arrayOf(
-        PropTypes.shape({
-            options: PropTypes.arrayOf(
-                PropTypes.shape({
-                    label: PropTypes.string.isRequired,
-                    img: PropTypes.any,
-                    condition: PropTypes.func,
-                })
-            ).isRequired,
-        })
-    ).isRequired,
-};
-    const [selections, setSelections] = useState(Array(steps.length).fill(null)); // Array to track selections
-    const [visibleIndex, setVisibleIndex] = useState(-1); // No dropdown visible initially
-    const dropdownRef = useRef(null); // Reference to track the currently opened dropdown
-
+    // Automatically select the only option if a step has only one
     useEffect(() => {
         if (steps[0]?.options.length === 1) {
             const firstOption = steps[0].options[0];
-            handleSelect(0, firstOption); // Select the only available option
+            handleSelect(0, firstOption);
         }
     }, [steps]);
 
+    // Close dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -83,32 +122,36 @@ MultiStepObjectSelector.propTypes = {
                     newSelections[visibleIndex] = { label: "None", img: null };
                     setSelections(newSelections);
                 }
-                setVisibleIndex(-1); // Close the dropdown
+                setVisibleIndex(-1); // Close dropdown
             }
         };
 
-        document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener("mousedown", handleClickOutside);
         return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [visibleIndex, selections]);
 
+    // Handle option selection
     const handleSelect = (stepIndex, option) => {
         const newSelections = [...selections];
         newSelections[stepIndex] = option;
 
+        // Clear selections for the next steps
         for (let i = stepIndex + 1; i < newSelections.length; i++) {
             newSelections[i] = null;
         }
         setSelections(newSelections);
 
+        // Move to the next dropdown or close it
         if (option.label !== "None" && stepIndex < steps.length - 1) {
-            setVisibleIndex(stepIndex + 1); // Display the next dropdown
+            setVisibleIndex(stepIndex + 1);
         } else {
-            setVisibleIndex(-1); // Hide dropdowns if "None" is selected or last step
+            setVisibleIndex(-1);
         }
     };
 
+    // Show or hide dropdowns
     const handleStepClick = (stepIndex) => {
         if (steps[stepIndex]?.options.length === 1) {
             const singleOption = steps[stepIndex].options[0];
@@ -119,8 +162,9 @@ MultiStepObjectSelector.propTypes = {
     };
 
     return (
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div style={{ display: "flex", gap: "10px" }}>
             {steps.map((step, stepIndex) => {
+                // Check if the current step should be displayed
                 const isHidden =
                     stepIndex !== 0 &&
                     (selections[stepIndex]?.label === "None" ||
@@ -138,79 +182,89 @@ MultiStepObjectSelector.propTypes = {
                     <div
                         key={stepIndex}
                         style={{
-                            width: '64px',
-                            height: '64px',
-                            backgroundColor: selections[stepIndex] ? 'transparent' : 'lightgray',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            position: 'relative',
-                            cursor: 'pointer',
+                            width: "64px",
+                            height: "64px",
+                            backgroundColor: selections[stepIndex] ? "transparent" : "lightgray",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            position: "relative",
+                            cursor: "pointer",
                         }}
                         onClick={() => handleStepClick(stepIndex)}
                     >
-                        {selections[stepIndex] ? (
-                            <img
-                                src={selections[stepIndex].img}
-                                alt={selections[stepIndex].label}
-                                // Reduced size for the displayed icon
+                        {/* Render selected icon, or show "Click" */}
+                        {selections[stepIndex]?.img ? (
+                            <div
                                 style={{
-                                    width: '40px',
-                                    height: '40px',
-                                    objectFit: 'contain',
+                                    width: "40px",
+                                    height: "40px",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
                                 }}
-                            />
+                            >
+                                {selections[stepIndex].img}
+                            </div>
                         ) : (
-                            'Click'
+                            "Click"
                         )}
 
+                        {/* Dropdown for the current step */}
                         {stepIndex === visibleIndex && (
                             <div
                                 ref={dropdownRef}
                                 style={{
-                                    position: 'absolute',
-                                    top: '100%',
+                                    position: "absolute",
+                                    top: "100%",
                                     left: 0,
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    backgroundColor: 'white',
-                                    padding: '10px',
-                                    borderRadius: '8px',
-                                    boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    backgroundColor: "white",
+                                    padding: "10px",
+                                    borderRadius: "8px",
+                                    boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
                                     zIndex: 999,
                                 }}
                             >
+                                {/* Render options */}
                                 {step.options
                                     .filter((option) => !option.condition || option.condition(selections))
                                     .map((option) => (
                                         <div
                                             key={option.label}
                                             style={{
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                alignItems: 'center',
-                                                cursor: 'pointer',
-                                                padding: '5px 0',
+                                                display: "flex",
+                                                flexDirection: "column",
+                                                alignItems: "center",
+                                                cursor: "pointer",
+                                                padding: "5px 0",
                                             }}
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleSelect(stepIndex, option);
                                             }}
                                         >
-                                            {option.img && (
-                                                <img
-                                                    src={option.img}
-                                                    alt={option.label}
-                                                    // Reduced size for the dropdown icons
-                                                    style={{
-                                                        width: '24px',
-                                                        height: '24px',
-                                                        objectFit: 'contain',
-                                                        marginBottom: '5px',
-                                                    }}
-                                                />
-                                            )}
-                                            <span style={{ fontSize: '12px', color: 'black' }}>{option.label}</span>
+                                            <div
+                                                style={{
+                                                    width: "24px",
+                                                    height: "24px",
+                                                    display: "flex",
+                                                    justifyContent: "center",
+                                                    alignItems: "center",
+                                                    marginBottom: "5px",
+                                                }}
+                                            >
+                                                {option.img}
+                                            </div>
+                                            <span
+                                                style={{
+                                                    fontSize: "12px",
+                                                    color: "black",
+                                                }}
+                                            >
+                                                {option.label}
+                                            </span>
                                         </div>
                                     ))}
                             </div>
@@ -220,6 +274,21 @@ MultiStepObjectSelector.propTypes = {
             })}
         </div>
     );
+};
+
+// PropTypes validation
+MultiStepObjectSelector.propTypes = {
+    steps: PropTypes.arrayOf(
+        PropTypes.shape({
+            options: PropTypes.arrayOf(
+                PropTypes.shape({
+                    label: PropTypes.string.isRequired,
+                    img: PropTypes.node,
+                    condition: PropTypes.func,
+                })
+            ).isRequired,
+        })
+    ).isRequired,
 };
 
 const ResearchRow = ({ label, rule, text, onClick, steps }) => (
@@ -324,6 +393,7 @@ const ResearchNotes = () => (
     </div>
 );
 
+
 function App() {
     return (
         <div style={{ display: 'flex', height: '100vh' }}>
@@ -336,7 +406,6 @@ function App() {
             {/* Right Side: Split into GameLog (top) and ResearchNotes (bottom) */}
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '10px' }}>
                 <div style={{ flex: 1, marginBottom: '10px' }}>
-                    <h1>Multi-Step Object Selector</h1>
                     <GameLog />
                 </div>
                 <div style={{ flex: 1 }}>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SVG Icons Display</title>
+  <style>
+    body {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9; /* Light background for better visibility */
+      padding: 20px;
+    }
+    .icon-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      font-size: 14px;
+    }
+    svg {
+      width: 64px;
+      height: 64px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="icon-container">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="100" height="100">
+    <!-- Full Circle -->
+    <!-- Rendering 12 equal segments -->
+    <circle cx="32" cy="32" r="30" fill="none" stroke="black" stroke-width="2" />
+    <!-- 12 Segments -->
+    <path d="M32,32 L32,2 A30,30 0 0,1 48.97,7.97 Z" fill="white" stroke="black" stroke-width="1" />
+    <path d="M32,32 L48.97,7.97 A30,30 0 0,1 58,22 Z" fill="white" stroke="black" stroke-width="1" />
+    <path d="M32,32 L58,22 A30,30 0 0,1 62,32 Z" fill="white" stroke="black" stroke-width="1" />
+    <path d="M32,32 L62,32 A30,30 0 0,1 58,42 Z" fill="white" stroke="black" stroke-width="1" />
+    <path d="M32,32 L58,42 A30,30 0 0,1 48.97,56.03 Z" fill="white" stroke="black" stroke-width="1" />
+    <path d="M32,32 L48.97,56.03 A30,30 0 0,1 32,62 Z" fill="white" stroke="black" stroke-width="1" />
+    <path d="M32,32 L32,62 A30,30 0 0,1 15.03,56.03 Z" fill="white" stroke="black" stroke-width="1" />
+    <path d="M32,32 L15.03,56.03 A30,30 0 0,1 6,42 Z" fill="white" stroke="black" stroke-width="1" />
+    <path d="M32,32 L6,42 A30,30 0 0,1 2,32 Z" fill="white" stroke="black" stroke-width="1" />
+    <path d="M32,32 L2,32 A30,30 0 0,1 6,22 Z" fill="white" stroke="black" stroke-width="1" />
+    <path d="M32,32 L6,22 A30,30 0 0,1 15.03,7.97 Z" fill="white" stroke="black" stroke-width="1" />
+    <path d="M32,32 L15.03,7.97 A30,30 0 0,1 32,2 Z" fill="white" stroke="black" stroke-width="1" />
+  </svg>
+  <span>Within Icon</span>
+</div>
+
+<div class="icon-container">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+    <!-- ADJACENT Icon -->
+    <g id="adjacent-icon">
+      <!-- Full Circle -->
+      <circle cx="32" cy="32" r="30" fill="none" stroke="black" stroke-width="2" />
+      <!-- Divide the circle into 12 segments -->
+      <path d="M32 32 L32 2" stroke="black" stroke-width="2" />
+      <path d="M32 32 L54 10" stroke="black" stroke-width="2" />
+      <path d="M32 32 L62 32" stroke="black" stroke-width="2" />
+      <path d="M32 32 L54 54" stroke="black" stroke-width="2" />
+      <path d="M32 32 L32 62" stroke="black" stroke-width="2" />
+      <path d="M32 32 L10 54" stroke="black" stroke-width="2" />
+      <path d="M32 32 L2 32" stroke="black" stroke-width="2" />
+      <path d="M32 32 L10 10" stroke="black" stroke-width="2" />
+      <!-- Highlight adjacent segments -->
+      <path d="M32 32 L32 2" stroke="blue" stroke-width="3" />
+      <path d="M32 32 L54 10" stroke="blue" stroke-width="3" />
+    </g>
+  </svg>
+  <span>Adjacent Icon</span>
+</div>
+
+<div class="icon-container">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+    <!-- OPPOSITE Icon -->
+    <g id="opposite-icon">
+      <!-- Full Circle -->
+      <circle cx="32" cy="32" r="30" fill="none" stroke="black" stroke-width="2" />
+      <!-- Divide the circle into 12 segments -->
+      <path d="M32 32 L32 2" stroke="black" stroke-width="2" />
+      <path d="M32 32 L54 10" stroke="black" stroke-width="2" />
+      <path d="M32 32 L62 32" stroke="black" stroke-width="2" />
+      <path d="M32 32 L54 54" stroke="black" stroke-width="2" />
+      <path d="M32 32 L32 62" stroke="black" stroke-width="2" />
+      <path d="M32 32 L10 54" stroke="black" stroke-width="2" />
+      <path d="M32 32 L2 32" stroke="black" stroke-width="2" />
+      <path d="M32 32 L10 10" stroke="black" stroke-width="2" />
+      <!-- Highlight opposite segments -->
+      <path d="M32 32 L32 2" stroke="blue" stroke-width="3" />
+      <path d="M32 32 L32 62" stroke="blue" stroke-width="3" />
+      <!-- Dashed line connecting opposite sides -->
+      <line x1="32" y1="2" x2="32" y2="62" stroke="blue" stroke-dasharray="4" stroke-width="2" />
+    </g>
+  </svg>
+  <span>Opposite Icon</span>
+</div>
+
+</body>
+</html>
