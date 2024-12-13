@@ -85,11 +85,11 @@
 //     return <CircleWithSegments numSegments={numSegments} highlightedSegments={highlightedSegments}/>;
 // };
 export const Adjacent = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="200" height="200">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
         <g id="adjacent-icon">
         <path d="M 32 32 L 62 32 A 30 30 0 0 0 57.98076211353316 17 Z" fill="black" stroke="black"
               strokeWidth="1"></path>
-        <path d="M 32 32 L 57.98076211353316 17 A 30 30 0 0 0 47 6.019237886466843 Z" fill="lightgreen" stroke="black"
+        <path d="M 32 32 L 57.98076211353316 17 A 30 30 0 0 0 47 6.019237886466843 Z" fill="yellow" stroke="black"
               strokeWidth="1"></path>
         <path d="M 32 32 L 47 6.019237886466843 A 30 30 0 0 0 32 2 Z" fill="white" stroke="black"
               strokeWidth="1"></path>
@@ -109,13 +109,13 @@ export const Adjacent = () => (
               strokeWidth="1"></path>
         <path d="M 32 32 L 46.99999999999998 57.980762113533174 A 30 30 0 0 0 57.98076211353315 47.000000000000014 Z"
               fill="white" stroke="black" strokeWidth="1"></path>
-        <path d="M 32 32 L 57.98076211353315 47.000000000000014 A 30 30 0 0 0 62 32.00000000000001 Z" fill="lightgreen"
+        <path d="M 32 32 L 57.98076211353315 47.000000000000014 A 30 30 0 0 0 62 32.00000000000001 Z" fill="yellow"
               stroke="black" strokeWidth="1"></path>
         </g>
     </svg>
 )
 export const Opposite = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="200" height="200">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
         <g id="opposite-icon">
             <path d="M 32 32 L 62 32 A 30 30 0 0 0 57.98076211353316 17 Z" fill="black" stroke="black"
                   strokeWidth="1"></path>
@@ -130,7 +130,7 @@ export const Opposite = () => (
             <path d="M 32 32 L 6.019237886466847 16.99999999999999 A 30 30 0 0 0 2 31.999999999999982 Z" fill="white"
                   stroke="black" strokeWidth="1"></path>
             <path d="M 32 32 L 2 31.999999999999996 A 30 30 0 0 0 6.019237886466836 46.99999999999999 Z"
-                  fill="lightgreen"
+                  fill="yellow"
                   stroke="black" strokeWidth="1"></path>
             <path d="M 32 32 L 6.019237886466836 46.99999999999999 A 30 30 0 0 0 16.999999999999986 57.98076211353315 Z"
                   fill="white" stroke="black" strokeWidth="1"></path>
@@ -146,13 +146,13 @@ export const Opposite = () => (
     </svg>
 );
 export const WithinN = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="200" height="200">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
         <g id="within-n-icon">
         <path d="M 32 32 L 62 32 A 30 30 0 0 0 57.98076211353316 17 Z" fill="black" stroke="black"
               strokeWidth="1"></path>
-        <path d="M 32 32 L 57.98076211353316 17 A 30 30 0 0 0 47 6.019237886466843 Z" fill="lightgreen" stroke="black"
+        <path d="M 32 32 L 57.98076211353316 17 A 30 30 0 0 0 47 6.019237886466843 Z" fill="yellow" stroke="black"
               strokeWidth="1"></path>
-        <path d="M 32 32 L 47 6.019237886466843 A 30 30 0 0 0 32 2 Z" fill="lightgreen" stroke="black"
+        <path d="M 32 32 L 47 6.019237886466843 A 30 30 0 0 0 32 2 Z" fill="yellow" stroke="black"
               strokeWidth="1"></path>
         <path d="M 32 32 L 32 2 A 30 30 0 0 0 17.000000000000007 6.01923788646684 Z" fill="white" stroke="black"
               strokeWidth="1"></path>
@@ -169,8 +169,8 @@ export const WithinN = () => (
         <path d="M 32 32 L 31.999999999999993 62 A 30 30 0 0 0 47 57.98076211353316 Z" fill="white" stroke="black"
               strokeWidth="1"></path>
         <path d="M 32 32 L 46.99999999999998 57.980762113533174 A 30 30 0 0 0 57.98076211353315 47.000000000000014 Z"
-              fill="lightgreen" stroke="black" strokeWidth="1"></path>
-        <path d="M 32 32 L 57.98076211353315 47.000000000000014 A 30 30 0 0 0 62 32.00000000000001 Z" fill="lightgreen"
+              fill="yellow" stroke="black" strokeWidth="1"></path>
+        <path d="M 32 32 L 57.98076211353315 47.000000000000014 A 30 30 0 0 0 62 32.00000000000001 Z" fill="yellow"
               stroke="black" strokeWidth="1"></path>
         </g>
     </svg>
