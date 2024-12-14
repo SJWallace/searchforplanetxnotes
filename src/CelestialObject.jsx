@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const CelestialObject = ({ image, type, size = "64px" }) => {
+const CelestialObject = ({ image, type, size = "2rem" }) => {
     const [state, setState] = useState("neutral");
 
     const handleClick = () => {
@@ -16,8 +16,8 @@ const CelestialObject = ({ image, type, size = "64px" }) => {
             onClick={handleClick}
             style={{
                 position: "relative",
-                width: "64px",
-                height: "64px",
+                width: `${size}`,
+                height: `${size}`,
                 cursor: "pointer",
                 display: "inline-block",
                 boxSizing: "border-box"
@@ -28,8 +28,8 @@ const CelestialObject = ({ image, type, size = "64px" }) => {
                 src={image}
                 alt={type}
                 style={{
-                    width: "100%",
-                    height: "100%",
+                    width: `${size}`,
+                    height: `${size}`,
                     objectFit: "contain",
                     filter: state === "neutral" ? "grayscale(100%)" : "none", // Gray for neutral
                     boxSizing: "border-box"
@@ -43,8 +43,8 @@ const CelestialObject = ({ image, type, size = "64px" }) => {
                         position: "absolute",
                         top: 0,
                         left: 0,
-                        width: "100%",
-                        height: "100%",
+                        width: `${size}`,
+                        height: `${size}`,
                         border: "5px solid green",
                         borderRadius: "50%",
                         boxSizing: "border-box",
@@ -60,8 +60,8 @@ const CelestialObject = ({ image, type, size = "64px" }) => {
                         position: "absolute",
                         top: 0,
                         left: 0,
-                        width: "100%",
-                        height: "100%",
+                        width: `${size}`,
+                        height: `${size}`,
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",

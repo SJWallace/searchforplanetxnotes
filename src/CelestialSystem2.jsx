@@ -19,14 +19,15 @@ const CelestialSystem2 = ({ configurations, index }) => {
     return (
         <div>
             {configurations.map((config, i) => (
-                <div key={i} style={{ marginBottom: "20px" }}>
-                    <div style={{ fontWeight: "bold", marginBottom: "10px" }}>Index: {index + i}</div>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                <div key={i} style={{ display: 'flex', flexDirection: 'column-reverse' }}> {/* Added flex-direction: column-reverse to show the first div at the relative outer edge of the circle */}
+                    <div style={{ fontWeight: "bold" }}>Index: {index + i}</div>
+                    <div style={{ display: "flex", flexDirection: "column-reverse"}}> {/* Added flex-direction: column-reverse to show the first div at the relative outer edge of the circle */}
                         {celestialComponents.map(({ name, component }, j) => (
-                            <div key={j} style={{ margin: "5px 0", padding: 0, height: "64px", width: "64px", boxSizing: "border-box" }}>
-                                {config.includes(name) ? component : <div style={{ height: "64px", width: "64px" }}></div>}
+                            <div key={j}>
+                                {config.includes(name) ? component : <div style={{ minHeight: "2rem" }}></div>}
                             </div>
                         ))}
+                        <div style={{ height: "4rem", width: "2rem" }}></div> {/* Keeps icons from overlapping at the center of the circle */}
                     </div>
                 </div>
             ))}

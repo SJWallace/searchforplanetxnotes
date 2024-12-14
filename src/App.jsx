@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Starscape from './Starscape.jsx';
 import ObjectIcons from './ObjectIcons'; // Assuming ObjectIcons is exported from a module
 import { RuleIcons } from "./RulesIcons.jsx";
-
+import Circle from './Circle.jsx';
 // Placeholder components for GameLog and ResearchNotes
 const GameLog = () => (
     <div style={{border: '1px solid black', padding: '10px', height: '100%'}}>
@@ -461,13 +461,13 @@ function App() {
     return (
         <div style={{ display: 'flex', height: '100vh' }}>
             {/* Left Side: Celestial Object */}
-            <div style={{ flex: 1, borderRight: '2px solid gray', padding: '10px' }}>
+            <div style={{ flex: 1 }}>
                 <h1>Celestial Object</h1>
-                <Starscape numberOfSystems={12} style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }} />
+                <Starscape numberOfSystems={12}/>
             </div>
 
             {/* Right Side: Split into GameLog (top) and ResearchNotes (bottom) */}
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '10px' }}>
+            <div style={{ flex: 2, display: 'flex', flexDirection: 'column' }}>
                 <div style={{ flex: 1, marginBottom: '10px' }}>
                     <GameLog />
                 </div>
