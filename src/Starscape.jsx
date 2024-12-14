@@ -6,6 +6,7 @@ import EmptySpace from "./EmptySpace";
 import GasCloud from "./GasCloud";
 import PlanetX from "./PlanetX";
 import CelestialSystem2 from "./CelestialSystem2";
+import Circle from "./Circle";
 
 const isPrime = (num) => {
     if (num < 2) return false;
@@ -25,13 +26,28 @@ const Starscape = ({ numberOfSystems = 12 }) => {
         return config;
     });
 
+    // Create an array of system components
+    const systems = configurations.map((config, index) => (
+        <div 
+            key={index} 
+        >
+            <CelestialSystem2 configurations={[config]} index={index + 1} />
+        </div>
+    ));
+
     return (
-        <div style={{ display: "grid", gridTemplateColumns: `repeat(${numberOfSystems}, 1fr)`, gap: "5px", borderRight: "1px solid black" }}>
-            {configurations.map((config, index) => (
-                <div key={index} style={{ borderLeft: index > 0 ? "1px solid black" : "none", display: "flex", flexDirection: "column", alignItems: "center", padding: "5px 0" }}>
-                    <CelestialSystem2 configurations={[config]} index={index + 1} />
-                </div>
-            ))}
+        <div style={{ 
+            position: "relative",
+            top:0,
+            left:0,
+            width: "100%",      
+            height: "100%",    
+            margin: "auto",     // Center the circle
+            display: "flex",
+        }}>
+                    <Circle>
+                        {systems}
+                    </Circle>
         </div>
     );
 };
