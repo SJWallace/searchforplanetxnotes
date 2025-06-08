@@ -6,30 +6,35 @@ import EmptySpace from "./EmptySpace";
 import GasCloud from "./GasCloud";
 import PlanetX from "./PlanetX";
 
-const CelestialSystem2 = ({ configurations, index }) => {
+const CelestialSystem2 = ({ sectorId }) => {
     const celestialComponents = [
-        { name: "Comet", component: <Comet /> },
-        { name: "Asteroid", component: <Asteroid /> },
-        { name: "DwarfPlanet", component: <DwarfPlanet /> },
-        { name: "GasCloud", component: <GasCloud /> },
-        { name: "EmptySpace", component: <EmptySpace /> },
-        { name: "PlanetX", component: <PlanetX /> }
+        { type: "comet", component: <Comet sectorId={sectorId} /> },
+        { type: "asteroid", component: <Asteroid sectorId={sectorId} /> },
+        { type: "dwarfPlanet", component: <DwarfPlanet sectorId={sectorId} /> },
+        { type: "gasCloud", component: <GasCloud sectorId={sectorId} /> },
+        { type: "emptySpace", component: <EmptySpace sectorId={sectorId} /> },
+        { type: "planetX", component: <PlanetX sectorId={sectorId} /> }
     ];
 
     return (
         <div>
-            {configurations.map((config, i) => (
-                <div key={i} style={{ marginBottom: "20px" }}>
-                    <div style={{ fontWeight: "bold", marginBottom: "10px" }}>Index: {index + i}</div>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                        {celestialComponents.map(({ name, component }, j) => (
-                            <div key={j} style={{ margin: "5px 0", padding: 0, height: "64px", width: "64px", boxSizing: "border-box" }}>
-                                {config.includes(name) ? component : <div style={{ height: "64px", width: "64px" }}></div>}
-                            </div>
-                        ))}
+            <div style={{ fontWeight: "bold", marginBottom: "10px" }}>Sector: {sectorId}</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                {celestialComponents.map(({ type, component }, j) => (
+                    <div 
+                        key={j} 
+                        style={{ 
+                            margin: "5px 0", 
+                            padding: 0, 
+                            height: "64px", 
+                            width: "64px", 
+                            boxSizing: "border-box" 
+                        }}
+                    >
+                        {component}
                     </div>
-                </div>
-            ))}
+                ))}
+            </div>
         </div>
     );
 };

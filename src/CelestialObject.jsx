@@ -1,14 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
+import useGameStore from "./stores/gameStore";
 
-const CelestialObject = ({ image, type, size = "64px" }) => {
-    const [state, setState] = useState("neutral");
+const CelestialObject = ({ sectorId, objectType, image, size = "64px" }) => {
+    const objectState = useGameStore(
+        state => state.sectors[sectorId - 1]?.possibleObjects[objectType]
+    );
+    const updateObjectState = useGameStore(state => state.updateObjectState);
 
     const handleClick = () => {
-        setState((prevState) => {
-            if (prevState === "neutral") return "confirmed";
-            if (prevState === "confirmed") return "eliminated";
-            return "neutral";
-        });
+        let newState;
+        if (objectState === "neutral") newState = "confirmed";
+        else if (objectState === "confirmed") newState = "eliminated";
+        else newState = "neutral";
+
+        updateObjectState(sectorId, objectType, newState);
     };
 
     return (
@@ -26,18 +31,17 @@ const CelestialObject = ({ image, type, size = "64px" }) => {
             {/* Base image */}
             <img
                 src={image}
-                alt={type}
                 style={{
                     width: "100%",
                     height: "100%",
                     objectFit: "contain",
-                    filter: state === "neutral" ? "grayscale(100%)" : "none", // Gray for neutral
+                    filter: objectState === "neutral" ? "grayscale(100%)" : "none", // Gray for neutral
                     boxSizing: "border-box"
                 }}
             />
 
             {/* Confirmed (Green Circle) */}
-            {state === "confirmed" && (
+            {objectState === "confirmed" && (
                 <div
                     style={{
                         position: "absolute",
@@ -54,7 +58,7 @@ const CelestialObject = ({ image, type, size = "64px" }) => {
             )}
 
             {/* Eliminated (Red X) */}
-            {state === "eliminated" && (
+            {objectState === "eliminated" && (
                 <div
                     style={{
                         position: "absolute",
