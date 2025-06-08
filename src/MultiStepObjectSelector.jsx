@@ -1,9 +1,91 @@
 import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
+// Extract common styles as constants
+const styles = {
+  button: {
+    padding: "5px 10px",
+    cursor: "pointer",
+    borderRadius: "4px",
+    background: "#f0f0f0",
+    border: "1px solid #ccc"
+  },
+  input: {
+    width: "50px",
+    textAlign: "center",
+    padding: "5px",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
+  },
+  flexContainer: {
+    display: "flex",
+    alignItems: "center",
+    gap: "10px"
+  },
+  selectorContainer: {
+    display: "flex",
+    gap: "10px"
+  },
+  selectorCell: {
+    width: "64px",
+    height: "64px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
+    cursor: "pointer",
+    fontSize: "14px",
+  },
+  iconWrapper: {
+    display: "flex", 
+    flexDirection: "column", 
+    alignItems: "center", 
+    textAlign: "center"
+  },
+  iconContainer: {
+    width: "40px",
+    height: "40px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  dropdownContainer: {
+    position: "absolute",
+    top: "calc(100% + 4px)",
+    left: 0,
+    display: "flex",
+    flexDirection: "column",
+    backgroundColor: "white",
+    padding: "10px",
+    borderRadius: "8px",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+    zIndex: 999,
+  },
+  dropdownItem: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    cursor: "pointer",
+    padding: "5px 0",
+    backgroundColor: "transparent",
+    transition: "background-color 0.3s",
+  },
+  smallIconContainer: {
+    width: "24px",
+    height: "24px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: "5px",
+  },
+  optionLabel: {
+    fontSize: "12px"
+  }
+};
+
+// Separate NumberDropdown component
 const NumberDropdown = ({ value, onChange }) => {
     const handleDecrease = () => {
-        // Ensure the value doesn't go negative
         onChange(Math.max(0, (value || 0) - 1));
     };
 
@@ -12,48 +94,15 @@ const NumberDropdown = ({ value, onChange }) => {
     };
 
     return (
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            {/* Decrement button */}
-            <button
-                onClick={handleDecrease}
-                style={{
-                    padding: "5px 10px",
-                    cursor: "pointer",
-                    borderRadius: "4px",
-                    background: "#f0f0f0",
-                    border: "1px solid #ccc"
-                }}
-            >
-                -
-            </button>
-
-            {/* Input field for direct number entry */}
+        <div style={styles.flexContainer}>
+            <button onClick={handleDecrease} style={styles.button}>-</button>
             <input
                 type="number"
                 value={value || 0}
                 onChange={(e) => onChange(Math.max(0, parseInt(e.target.value) || 0))}
-                style={{
-                    width: "50px",
-                    textAlign: "center",
-                    padding: "5px",
-                    border: "1px solid #ccc",
-                    borderRadius: "4px",
-                }}
+                style={styles.input}
             />
-
-            {/* Increment button */}
-            <button
-                onClick={handleIncrease}
-                style={{
-                    padding: "5px 10px",
-                    cursor: "pointer",
-                    borderRadius: "4px",
-                    background: "#f0f0f0",
-                    border: "1px solid #ccc"
-                }}
-            >
-                +
-            </button>
+            <button onClick={handleIncrease} style={styles.button}>+</button>
         </div>
     );
 };
@@ -64,65 +113,71 @@ NumberDropdown.propTypes = {
 };
 
 const MultiStepObjectSelector = ({ steps, initialSelections = [], onSelectionsChange }) => {
-    const [selections, setSelections] = useState(initialSelections.length ? initialSelections : Array(steps.length).fill(null)); // Track selections
-    const [visibleIndex, setVisibleIndex] = useState(-1); // Track which dropdown is open
-    const dropdownRef = useRef();
+    const [selections, setSelections] = useState([]);
+    const [visibleIndex, setVisibleIndex] = useState(-1);
+    const dropdownRef = useRef(null);
 
-    // Initialize with initialSelections if provided
+    // Initialize selections
     useEffect(() => {
-        if (initialSelections.length && JSON.stringify(selections) !== JSON.stringify(initialSelections)) {
-            setSelections(initialSelections);
+        if (steps && steps.length) {
+            const defaultSelections = initialSelections && initialSelections.length 
+                ? [...initialSelections]
+                : Array(steps.length).fill(null);
+            setSelections(defaultSelections);
         }
-    }, [initialSelections]);
+    }, [steps, initialSelections]);
 
     const handleSelect = (stepIndex, option) => {
-        // Create a new copy of the selections state
+        if (!option) return;
+        if (stepIndex < 0 || stepIndex >= selections.length) return;
+
         const newSelections = [...selections];
         newSelections[stepIndex] = option;
 
-        // Special case for "WITHIN" to manage dependencies on "Set Distance" (step 4)
-        if (stepIndex === 3 && option.label !== "WITHIN") {
-            // Clear distance input (step 4) if the relationship is not "WITHIN"
-            newSelections[4] = null;
-        }
-
-        // Clear invalid selections for dependent steps (but allow out-of-order selection)
-        if (stepIndex === 3 && option.label === "WITHIN") {
-            // Ensure "Set Distance" step is preserved when "WITHIN" is selected
-            for (let i = stepIndex + 1; i < newSelections.length; i++) {
-                if (i !== 4) newSelections[i] = null;
+        // Special case for "WITHIN" relationship
+        if (stepIndex === 3) {
+            if (option.label === "WITHIN") {
+                // Clear selections after step 4 but preserve step 4 (distance)
+                for (let i = stepIndex + 1; i < newSelections.length; i++) {
+                    if (i !== 4) newSelections[i] = null;
+                }
+            } else {
+                // Clear distance (step 4) if not "WITHIN"
+                newSelections[4] = null;
             }
         }
 
-        // Update the shared state of MultiStepObjectSelector
         setSelections(newSelections);
-        
-        // Notify parent component of the change
+
         if (onSelectionsChange) {
             onSelectionsChange(newSelections);
         }
 
-        // Adjust the visible dropdown — move to the next step if in order, else close
+        // Adjust visible dropdown
         setVisibleIndex(stepIndex < steps.length - 1 ? stepIndex + 1 : -1);
     };
 
-    // Handles number changes (distance/quantity selection)
     const handleNumberChange = (stepIndex, value) => {
+        if (stepIndex < 0 || stepIndex >= selections.length) return;
+
         const newSelections = [...selections];
-        newSelections[stepIndex] = { ...newSelections[stepIndex], label: value }; // Update with the selected number
+        newSelections[stepIndex] = { 
+            ...newSelections[stepIndex] || {}, 
+            label: value 
+        };
+
         setSelections(newSelections);
-        
-        // Notify parent component of the change
+
         if (onSelectionsChange) {
             onSelectionsChange(newSelections);
         }
     };
 
-    // Utility to close dropdowns when clicking outside
+    // Handle clicks outside dropdown
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setVisibleIndex(-1); // Close dropdown
+                setVisibleIndex(-1);
             }
         };
 
@@ -132,46 +187,42 @@ const MultiStepObjectSelector = ({ steps, initialSelections = [], onSelectionsCh
         };
     }, []);
 
+    // Ensure steps exists and is an array before mapping
+    if (!steps || !Array.isArray(steps)) {
+        return <div>Invalid steps configuration</div>;
+    }
+
     return (
-        <div style={{ display: "flex", gap: "10px" }}>
-            {/* Loop through each step */}
+        <div style={styles.selectorContainer}>
             {steps.map((step, stepIndex) => {
+                // Check if step should be hidden
                 const isHidden =
                     stepIndex !== 0 &&
-                    (selections[stepIndex]?.label === "None" || steps.some((prevStep, prevIndex) => prevIndex < stepIndex && selections[prevIndex]?.label === "None"));
+                    (selections[stepIndex]?.label === "None" || 
+                     steps.some((_, prevIndex) => 
+                        prevIndex < stepIndex && 
+                        selections[prevIndex]?.label === "None"
+                     ));
 
                 if (isHidden) return null;
 
+                // Render selector cell
                 return (
                     <div
                         key={stepIndex}
                         style={{
-                            width: "64px",
-                            height: "64px",
+                            ...styles.selectorCell,
                             backgroundColor: selections[stepIndex] ? "transparent" : "lightgray",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            position: "relative",
-                            cursor: "pointer",
-                            fontSize: "14px",
                         }}
-                        onClick={() => setVisibleIndex((prevIndex) => (prevIndex === stepIndex ? -1 : stepIndex))}
+                        onClick={() => setVisibleIndex(prevIndex => 
+                            prevIndex === stepIndex ? -1 : stepIndex
+                        )}
                     >
-                        {/* Display the icon scaled to 40px, or the label only if no icon exists */}
+                        {/* Display selection or "Click" text */}
                         {selections[stepIndex]?.label ? (
-                            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
-                                {/* Render icon only if it exists */}
+                            <div style={styles.iconWrapper}>
                                 {selections[stepIndex]?.img ? (
-                                    <div
-                                        style={{
-                                            width: "40px",
-                                            height: "40px",
-                                            display: "flex",
-                                            justifyContent: "center",
-                                            alignItems: "center",
-                                        }}
-                                    >
+                                    <div style={styles.iconContainer}>
                                         {React.cloneElement(selections[stepIndex]?.img, {
                                             style: { width: "100%", height: "100%" },
                                         })}
@@ -184,68 +235,45 @@ const MultiStepObjectSelector = ({ steps, initialSelections = [], onSelectionsCh
                             "Click"
                         )}
 
-                        {/* Render dropdown options */}
-                        {stepIndex === visibleIndex && (
-                            <div
-                                ref={dropdownRef}
-                                style={{
-                                    position: "absolute",
-                                    top: "calc(100% + 4px)", // Add some spacing between the parent and dropdown (if needed)
-                                    left: 0,
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    backgroundColor: "white",
-                                    padding: "10px",
-                                    borderRadius: "8px",
-                                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-                                    zIndex: 999,
-                                }}
-                            >
+                        {/* Dropdown menu */}
+                        {stepIndex === visibleIndex && step && step.options && (
+                            <div ref={dropdownRef} style={styles.dropdownContainer}>
                                 {step.options
-                                    .filter((option) => !option.condition || option.condition(selections))
-                                    .map((option) => (
+                                    .filter(option => !option.condition || option.condition(selections))
+                                    .map(option => (
                                         <div
                                             key={option.label}
-                                            style={{
-                                                display: "flex",
-                                                flexDirection: "column",
-                                                alignItems: "center",
-                                                cursor: "pointer",
-                                                padding: "5px 0",
-                                                backgroundColor: "transparent", // Default background
-                                                transition: "background-color 0.3s", // Smooth hover effect
-                                            }}
-                                            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f0f0f0")} // Highlight on hover
-                                            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")} // Reset on mouse leave
-                                            onClick={(e) => {
+                                            style={styles.dropdownItem}
+                                            onMouseEnter={e => e.currentTarget.style.backgroundColor = "#f0f0f0"}
+                                            onMouseLeave={e => e.currentTarget.style.backgroundColor = "transparent"}
+                                            onClick={e => {
                                                 e.stopPropagation();
-                                                if (option.label !== "Set Quantity" && option.label !== "Set Distance") {
+
+                                                // Handle special cases for quantity/distance options
+                                                const isSpecialOption = 
+                                                    option.label === "Set Quantity" || 
+                                                    option.label === "Set Distance";
+
+                                                if (!isSpecialOption) {
                                                     handleSelect(stepIndex, option);
                                                 }
                                             }}
                                         >
-                                            {/* Show icon and label */}
-                                            <div
-                                                style={{
-                                                    width: "24px",
-                                                    height: "24px",
-                                                    display: "flex",
-                                                    justifyContent: "center",
-                                                    alignItems: "center",
-                                                    marginBottom: "5px",
-                                                }}
-                                            >
+                                            {/* Show icon */}
+                                            <div style={styles.smallIconContainer}>
                                                 {option.img}
                                             </div>
-                                            <span style={{fontSize: "12px"}}>{option.label}</span>
 
-                                            {/* Render NumberDropdown if required */}
-                                            {option.label === "Set Quantity" || option.label === "Set Distance" ? (
+                                            {/* Show label */}
+                                            <span style={styles.optionLabel}>{option.label}</span>
+
+                                            {/* Show number controls for special options */}
+                                            {(option.label === "Set Quantity" || option.label === "Set Distance") && (
                                                 <NumberDropdown
                                                     value={parseInt(selections[stepIndex]?.label || 0, 10)}
-                                                    onChange={(value) => handleNumberChange(stepIndex, value)}
+                                                    onChange={value => handleNumberChange(stepIndex, value)}
                                                 />
-                                            ) : null}
+                                            )}
                                         </div>
                                     ))}
                             </div>
